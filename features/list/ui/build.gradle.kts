@@ -61,6 +61,12 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
 
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+
+    //Paging 3
+    implementation("androidx.paging:paging-runtime-ktx:3.2.1")
+    implementation("androidx.paging:paging-compose:3.2.1")
+
 
     //Compose
     implementation(platform("androidx.compose:compose-bom:2023.09.02"))

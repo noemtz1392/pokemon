@@ -6,6 +6,14 @@ object Dependencies {
         Dependency.Hilt,
         Dependency.Ksp.Hilt,
         Dependency.HiltNavigationCompose,
+        Dependency.Ksp.AndroidHilt
+    )
+
+    val baseData = listOf(
+        Dependency.Room,
+        Dependency.RoomKtk,
+        Dependency.RoomPaging,
+        Dependency.Ksp.Room,
     )
 
     val data = listOf(

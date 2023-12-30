@@ -72,6 +72,21 @@ sealed class Dependency(
         packageName = "androidx.hilt:hilt-navigation-compose"
     )
 
+    object Room : Dependency(
+        versionNumber = Versions.ROOM,
+        packageName = "androidx.room:room-runtime"
+    )
+
+    object RoomKtk : Dependency(
+        versionNumber = Versions.ROOM,
+        packageName = "androidx.room:room-ktx"
+    )
+
+    object RoomPaging : Dependency(
+        versionNumber = Versions.ROOM,
+        packageName = "androidx.room:room-paging"
+    )
+
     sealed class Ksp(
         private val versionNumber: String,
         private val packageName: String
@@ -87,9 +102,19 @@ sealed class Dependency(
             packageName = "com.google.dagger:hilt-android-compiler"
         )
 
+        object AndroidHilt : Ksp(
+            versionNumber = "1.1.0",
+            packageName = "androidx.hilt:hilt-compiler"
+        )
+
         object MoshiCodegen : Ksp(
             versionNumber = Versions.MOSHI,
             packageName = "com.squareup.moshi:moshi-kotlin-codegen"
+        )
+
+        object Room : Ksp(
+            versionNumber = Versions.ROOM,
+            packageName = "androidx.room:room-compiler"
         )
     }
 }

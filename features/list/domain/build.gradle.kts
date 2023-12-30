@@ -7,6 +7,8 @@ plugins {
 dependencies {
     customImplementation(Dependencies.domain)
     customImplementation(Dependencies.di)
+    implementation("androidx.paging:paging-common:3.2.1")
+
 
     api(":base:domain")
 }

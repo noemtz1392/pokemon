@@ -30,12 +30,13 @@ android {
             manifestPlaceholders["crashlyticsEnabled"] = false
         }
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             manifestPlaceholders["crashlyticsEnabled"] = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -67,6 +68,7 @@ android {
 dependencies {
     customImplementation(Dependencies.app)
 
+    project(":features:list:data")
     project(":features:list:domain")
     project(":features:list:ui")
 

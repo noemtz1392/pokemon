@@ -8,4 +8,5 @@ object Versions {
     const val OK_HTTP = "4.12.0"
     const val RETROFIT = "2.9.0"
     const val MOSHI = "1.15.0"
+    const val ROOM = "2.6.1"
 }

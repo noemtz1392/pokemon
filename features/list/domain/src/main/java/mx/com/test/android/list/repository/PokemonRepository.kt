@@ -1,9 +1,9 @@
 package mx.com.test.android.list.repository
 
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import mx.com.test.android.domain.common.Result
 import mx.com.test.android.list.model.Pokemon
 
-fun interface PokemonRepository {
-    fun getPokemonList(): Flow<Result<List<Pokemon>>>
+interface PokemonRepository {
+    fun getPokemonList(offset: Int, limit: Int): Flow<PagingData<Pokemon>>
 }
