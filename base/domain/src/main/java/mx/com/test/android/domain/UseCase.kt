@@ -5,17 +5,19 @@ import kotlinx.coroutines.withContext
 import mx.com.test.android.domain.common.Result
 
 abstract class UseCase<in P, out R>(
+    private val exceptionHandler: ExceptionHandler,
     private val dispatcher: CoroutineDispatcher,
-    private val handler: ExceptionHandler,
 ) {
 
-    suspend operator fun invoke(params: P) = try {
-        withContext(dispatcher) {
-            execute(params)
+    suspend operator fun invoke(params: P): Result<R> {
+        return try {
+            withContext(dispatcher) {
+                execute(params)
+            }
+        } catch (throwable: Throwable) {
+            exceptionHandler.handle(throwable)
+            Result.Failure(throwable)
         }
-    } catch (throwable: Throwable) {
-        handler.handle(throwable)
-        Result.Failure(throwable)
     }
 
     @Throws(RuntimeException::class)

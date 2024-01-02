@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_menu">Menu</string>
+    <string name="action_more">More</string>
+
+    <string name="action_add_to_favorite">Add to favorite</string>
+    <string name="action_remove_to_favorite">Remove to favorite</string>
+</resources>

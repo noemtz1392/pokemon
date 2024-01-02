@@ -29,12 +29,20 @@ data class PokemonApi(
 data class PokemonInfoApi(
     val id: Int,
     val name: String,
-    val imageUrl: String?,
+    @Json(name = "sprites")
+    val sprites: SpritesApi,
     val height: Int,
     val weight: Int,
-    @Json(name = "types")
-    val types: List<PokemonTypeApi>
+    //@Json(name = "types")
+    //val types: List<PokemonTypeApi>?
 )
+
+@JsonClass(generateAdapter = true)
+data class SpritesApi(
+    @Json(name = "front_default")
+    val frontDefault: String
+)
+
 
 @JsonClass(generateAdapter = true)
 data class PokemonTypeApi(

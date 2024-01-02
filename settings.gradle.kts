@@ -19,7 +19,8 @@ include(":app")
 
 include(
     ":base:data",
-    ":base:domain"
+    ":base:domain",
+    ":base:ui"
 )
 
 include(
@@ -27,4 +28,3 @@ include(
     ":features:list:domain",
     ":features:list:ui"
 )
-include(":base:ui")

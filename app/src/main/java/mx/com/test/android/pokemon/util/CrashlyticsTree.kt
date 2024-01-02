@@ -1,4 +1,4 @@
-package mx.com.android.shift.util
+package mx.com.test.android.pokemon.util
 
 import android.util.Log
 import timber.log.Timber

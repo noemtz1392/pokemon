@@ -1,4 +1,4 @@
-package mx.com.test.android.pokemon.ui.theme
+package mx.com.test.android.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

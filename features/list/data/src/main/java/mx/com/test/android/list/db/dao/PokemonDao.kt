@@ -12,6 +12,12 @@ interface PokemonDao : BaseDao<PokemonEntity> {
     @Query("SELECT * FROM Pokemon")
     fun pagingSource(): PagingSource<Int, PokemonEntity>
 
+    @Query("UPDATE Pokemon SET favorite=:isFavorite WHERE id=:id")
+    suspend fun addToFavorite(id: Int, isFavorite: Boolean): Int
+
+    @Query("UPDATE Pokemon SET favorite=:isFavorite WHERE id=:id")
+    suspend fun removeToFavorite(id: Int, isFavorite: Boolean): Int
+
     @Query("DELETE FROM Pokemon")
     suspend fun deleteAll()
 }

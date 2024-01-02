@@ -27,11 +27,9 @@ object NetworkModule {
     @Singleton
     fun provideLoggingInterceptor(): Interceptor {
         return HttpLoggingInterceptor { message ->
-            Timber.i("********************")
-            Timber.i("********************")
-            Timber.i(message)
-            Timber.i("********************")
-            Timber.i("********************")
+            Timber.tag("CALL-API").i("********************")
+            Timber.tag("CALL-API").i(message)
+            Timber.tag("CALL-API").i("********************")
         }.run {
             level = HttpLoggingInterceptor.Level.BODY
             this

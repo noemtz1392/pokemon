@@ -5,18 +5,22 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import mx.com.test.android.list.db.dao.PokemonDao
+import mx.com.test.android.list.db.dao.PokemonTypeDao
 import mx.com.test.android.list.db.dao.RemoteKeysDao
 import mx.com.test.android.list.db.dao.TransactionRunnerDao
 import mx.com.test.android.list.db.entities.PokemonEntity
+import mx.com.test.android.list.db.entities.PokemonType
 import mx.com.test.android.list.db.entities.RemoteKeysEntity
 
 @Database(
-    entities = [PokemonEntity::class, RemoteKeysEntity::class],
+    entities = [PokemonEntity::class, PokemonType::class, RemoteKeysEntity::class],
+    version = PokemonDatabase.DB_VERSION,
     exportSchema = true,
-    version = PokemonDatabase.DB_VERSION
 )
 abstract class PokemonDatabase : RoomDatabase() {
     abstract fun pokemonDao(): PokemonDao
+
+    abstract fun pokemonTypeDao(): PokemonTypeDao
 
     abstract fun remoteKeysDao(): RemoteKeysDao
 

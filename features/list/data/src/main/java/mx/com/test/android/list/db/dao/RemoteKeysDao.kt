@@ -11,7 +11,7 @@ interface RemoteKeysDao : BaseDao<RemoteKeysEntity> {
     suspend fun getRemoteKeys(): List<RemoteKeysEntity?>
 
     @Query("DELETE FROM RemoteKeys")
-    suspend fun deleteRemoteKeys()
+    suspend fun deleteAll()
 
     @Query("SELECT created_at FROM RemoteKeys ORDER BY created_at DESC LIMIT 1")
     suspend fun getCreationTime(): Long?

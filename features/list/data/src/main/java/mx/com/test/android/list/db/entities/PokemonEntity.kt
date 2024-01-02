@@ -18,12 +18,15 @@ data class PokemonEntity(
     @ColumnInfo(name = "name")
     val name: String,
 
-    @ColumnInfo(name = "sprite_front_url")
-    val frontImageUrl: String,
+    @ColumnInfo(name = "image_url")
+    val imageUrl: String,
 
     @ColumnInfo(name = "height")
-    val height: Int,
+    val height: Int = 0,
 
     @ColumnInfo(name = "weight")
-    val weight: Int
+    val weight: Int = 0,
+
+    @ColumnInfo(name = "favorite")
+    val isFavorite: Boolean = false
 )

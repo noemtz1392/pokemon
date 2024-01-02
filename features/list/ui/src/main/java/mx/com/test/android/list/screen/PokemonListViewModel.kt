@@ -14,14 +14,20 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mx.com.test.android.list.PokemonItem
-import mx.com.test.android.list.PokemonToPokemonItemMapper
+import mx.com.test.android.list.interactor.AddToFavoriteUseCase
 import mx.com.test.android.list.interactor.GetPokemonListUseCase
+import mx.com.test.android.list.interactor.RemoveToFavoriteUseCase
+import mx.com.test.android.list.mapper.PokemonItemToPokemonMapper
+import mx.com.test.android.list.mapper.PokemonToPokemonItemMapper
 import javax.inject.Inject
 
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
     private val getPokemonListUseCase: GetPokemonListUseCase,
+    private val addToFavoriteUseCase: AddToFavoriteUseCase,
+    private val removeToFavoriteUseCase: RemoveToFavoriteUseCase,
     private val pokemonToPokemonItemMapper: PokemonToPokemonItemMapper,
+    private val pokemonItemToPokemonMapper: PokemonItemToPokemonMapper,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -37,9 +43,9 @@ class PokemonListViewModel @Inject constructor(
     fun onEvent(event: PokemonListEvent) {
         viewModelScope.launch {
             when (event) {
-                is PokemonListEvent.AddToFavorites -> TODO()
                 PokemonListEvent.GetPokemonList -> getPokemonList()
-                is PokemonListEvent.RemoveToFavorites -> TODO()
+                is PokemonListEvent.AddToFavorites -> addToFavorite(event.pokemon)
+                is PokemonListEvent.RemoveToFavorites -> removeToFavorite(event.pokemon)
             }
         }
     }
@@ -53,10 +59,15 @@ class PokemonListViewModel @Inject constructor(
                 }
             }
             .cachedIn(viewModelScope)
-            .collect {
-                _uiState.value = it
-                //currentPage = currentPage.plus(1)
-            }
+            .collect { _uiState.value = it }
+    }
+
+    private suspend fun addToFavorite(pokemon: PokemonItem) {
+        addToFavoriteUseCase(pokemonItemToPokemonMapper.mapFrom(pokemon))
+    }
+
+    private suspend fun removeToFavorite(pokemon: PokemonItem) {
+        removeToFavoriteUseCase(pokemonItemToPokemonMapper.mapFrom(pokemon))
     }
 
     companion object {

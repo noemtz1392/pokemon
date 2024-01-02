@@ -2,7 +2,7 @@ package mx.com.test.android.pokemon.util.initializers
 
 import android.content.Context
 import androidx.startup.Initializer
-import mx.com.android.shift.util.CrashlyticsTree
+import mx.com.test.android.pokemon.util.CrashlyticsTree
 import timber.log.Timber
 
 class TimberInitializer : Initializer<Unit> {
