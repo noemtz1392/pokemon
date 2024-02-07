@@ -5,17 +5,20 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mx.com.test.android.data.dao.TransactionRunner
 import mx.com.test.android.domain.common.Result
 import mx.com.test.android.list.db.dao.PokemonDao
+import mx.com.test.android.list.db.dao.PokemonTypeDao
 import mx.com.test.android.list.db.dao.RemoteKeysDao
-import mx.com.test.android.list.db.entities.PokemonEntity
 import mx.com.test.android.list.db.entities.RemoteKeysEntity
+import mx.com.test.android.list.db.entities.relations.PokemonTypesCrossRef
+import mx.com.test.android.list.db.entities.relations.PokemonWithTypes
 import mx.com.test.android.list.mapper.PokemonApiToPokemonEntityMapper
+import mx.com.test.android.list.mapper.PokemonTypeApiToPokemonTypeEntityMapper
 import mx.com.test.android.list.source.remote.RemoteDataSource
 import retrofit2.HttpException
+import timber.log.Timber
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -23,12 +26,14 @@ import javax.inject.Inject
 @OptIn(ExperimentalPagingApi::class)
 class PokemonRemoteMediator @Inject constructor(
     private val pokemonDao: PokemonDao,
+    private val pokemonTypeDao: PokemonTypeDao,
     private val remoteKeysDao: RemoteKeysDao,
     private val transactionRunner: TransactionRunner,
     private val remoteDataSource: RemoteDataSource,
     private val pokemonApiToPokemonEntityMapper: PokemonApiToPokemonEntityMapper,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : RemoteMediator<Int, PokemonEntity>() {
+    private val pokemonTypeApiToPokemonTypeEntityMapper: PokemonTypeApiToPokemonTypeEntityMapper,
+    private val dispatcher: CoroutineDispatcher,
+) : RemoteMediator<Int, PokemonWithTypes>() {
 
     override suspend fun initialize(): InitializeAction {
         val cacheTimeout = TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES)
@@ -43,7 +48,7 @@ class PokemonRemoteMediator @Inject constructor(
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, PokemonEntity>
+        state: PagingState<Int, PokemonWithTypes>
     ): MediatorResult {
         val page: Int = when (loadType) {
             LoadType.REFRESH -> {
@@ -56,7 +61,7 @@ class PokemonRemoteMediator @Inject constructor(
                 if (lastItem == null) {
                     1
                 } else {
-                    (lastItem.id / state.config.pageSize) + 1
+                    (lastItem.pokemon.id / state.config.pageSize) + 1
                 }
             }
         }
@@ -86,10 +91,32 @@ class PokemonRemoteMediator @Inject constructor(
                 transactionRunner {
                     if (loadType == LoadType.REFRESH) {
                         remoteKeysDao.deleteAll()
+                        pokemonTypeDao.deleteAll()
                         pokemonDao.deleteAll()
                     }
                     remoteKeysDao.insertAll(remoteKeys)
-                    pokemonDao.insertAll(pokemonApiToPokemonEntityMapper.mapFromList(pokemonList.data))
+
+                    pokemonList.data.onEach { pokemonInfo ->
+
+                        val pokemonEntity = pokemonApiToPokemonEntityMapper.mapFrom(pokemonInfo)
+                        val pokemonId = pokemonDao.insert(pokemonEntity)
+
+                        pokemonInfo.types.onEach {
+                            val type = pokemonTypeApiToPokemonTypeEntityMapper.mapFrom(it.type)
+                            val typeId = pokemonTypeDao.insert(type)
+
+                            val pokemonTypesCrossRef = PokemonTypesCrossRef(
+                                pokemonId = pokemonId.toInt(),
+                                pokemonName = pokemonEntity.name,
+                                pokemonTypeId = typeId.toInt(),
+                                pokemonType = type.name
+                            )
+                            pokemonDao.insertPokemonTypeCrossRef(pokemonTypesCrossRef)
+                        }
+                    }
+
+                    val res = pokemonDao.getPokemonWithType()
+                    Timber.d(res.count().toString())
                 }
             }
             MediatorResult.Success(endOfPaginationReached = endOfPagination)

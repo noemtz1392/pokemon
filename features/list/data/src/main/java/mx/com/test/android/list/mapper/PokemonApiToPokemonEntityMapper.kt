@@ -9,9 +9,11 @@ class PokemonApiToPokemonEntityMapper : Mapper<PokemonInfoApi, PokemonEntity>() 
         return PokemonEntity(
             id = from.id,
             name = from.name,
-            imageUrl = from.sprites.frontDefault,
+            imageUrl = from.sprites.otherSprite.homeSprite.imageUrl,
+            shinyImageUrl = from.sprites.otherSprite.homeSprite.shinyImageUrl,
+            defaultImageUrl = from.sprites.defaultImageUrl,
             height = from.height,
-            weight = from.weight
+            weight = from.weight,
         )
     }
 }

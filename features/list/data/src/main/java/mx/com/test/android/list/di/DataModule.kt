@@ -13,10 +13,12 @@ import kotlinx.coroutines.Dispatchers
 import mx.com.test.android.data.dao.TransactionRunner
 import mx.com.test.android.list.api.ApiService
 import mx.com.test.android.list.db.dao.PokemonDao
+import mx.com.test.android.list.db.dao.PokemonTypeDao
 import mx.com.test.android.list.db.dao.RemoteKeysDao
-import mx.com.test.android.list.db.entities.PokemonEntity
+import mx.com.test.android.list.db.entities.relations.PokemonWithTypes
 import mx.com.test.android.list.mapper.PokemonApiToPokemonEntityMapper
-import mx.com.test.android.list.mapper.PokemonEntityToPokemonMapper
+import mx.com.test.android.list.mapper.PokemonTypeApiToPokemonTypeEntityMapper
+import mx.com.test.android.list.mapper.PokemonWithTypesToPokemonMapper
 import mx.com.test.android.list.repository.PokemonDataRepository
 import mx.com.test.android.list.repository.PokemonRepository
 import mx.com.test.android.list.repository.paging.PokemonRemoteMediator
@@ -34,26 +36,30 @@ object DataModule {
     private const val INITIAL_OFFSET = 1
     private const val PAGE_SIZE = 25
 
-    @Singleton
     @Provides
+    @Singleton
     fun providePokemonRepository(
-        pager: Pager<Int, PokemonEntity>,
-        pokemonEntityToPokemonMapper: PokemonEntityToPokemonMapper,
+        pager: Pager<Int, PokemonWithTypes>,
+        pokemonWithTypesToPokemonMapper: PokemonWithTypesToPokemonMapper,
         localDataSource: LocalDataSource,
     ): PokemonRepository = PokemonDataRepository(
         pager = pager,
-        pokemonEntityToPokemonMapper = pokemonEntityToPokemonMapper,
+        pokemonWithTypesToPokemonMapper = pokemonWithTypesToPokemonMapper,
         localDataSource = localDataSource
     )
 
     @Provides
     @Singleton
-    fun provideLocalDataSource(pokemonDao: PokemonDao): LocalDataSource =
-        RoomLocalDataSource(pokemonDao = pokemonDao)
+    fun provideLocalDataSource(
+        pokemonDao: PokemonDao,
+        pokemonWithTypesToPokemonMapper: PokemonWithTypesToPokemonMapper
+    ): LocalDataSource = RoomLocalDataSource(
+        pokemonDao = pokemonDao,
+        pokemonWithTypesToPokemonMapper = pokemonWithTypesToPokemonMapper
+    )
 
-
-    @Singleton
     @Provides
+    @Singleton
     fun providePokemonRemoteDataSource(apiService: ApiService): RemoteDataSource =
         ApiDataSource(apiService = apiService)
 
@@ -62,17 +68,21 @@ object DataModule {
     @Singleton
     fun providePokemonRemoteMediator(
         pokemonDao: PokemonDao,
+        pokemonTypeDao: PokemonTypeDao,
         remoteKeysDao: RemoteKeysDao,
         transactionRunner: TransactionRunner,
         remoteDataSource: RemoteDataSource,
         pokemonApiToPokemonEntityMapper: PokemonApiToPokemonEntityMapper,
+        pokemonTypeApiToPokemonTypeEntityMapper: PokemonTypeApiToPokemonTypeEntityMapper,
         dispatcher: CoroutineDispatcher
-    ): RemoteMediator<Int, PokemonEntity> = PokemonRemoteMediator(
+    ): RemoteMediator<Int, PokemonWithTypes> = PokemonRemoteMediator(
         pokemonDao = pokemonDao,
+        pokemonTypeDao = pokemonTypeDao,
         remoteKeysDao = remoteKeysDao,
         transactionRunner = transactionRunner,
         remoteDataSource = remoteDataSource,
         pokemonApiToPokemonEntityMapper = pokemonApiToPokemonEntityMapper,
+        pokemonTypeApiToPokemonTypeEntityMapper = pokemonTypeApiToPokemonTypeEntityMapper,
         dispatcher = dispatcher
     )
 
@@ -81,13 +91,12 @@ object DataModule {
     fun provideDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
 
-    @OptIn(ExperimentalPagingApi::class)
     @Provides
     @Singleton
     fun providePager(
         pokemonRemoteMediator: PokemonRemoteMediator,
         pokemonDao: PokemonDao,
-    ): Pager<Int, PokemonEntity> = Pager(
+    ): Pager<Int, PokemonWithTypes> = Pager(
         initialKey = INITIAL_OFFSET,
         config = PagingConfig(
             pageSize = PAGE_SIZE,

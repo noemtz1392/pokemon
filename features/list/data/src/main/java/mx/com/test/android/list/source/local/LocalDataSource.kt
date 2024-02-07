@@ -1,6 +1,10 @@
 package mx.com.test.android.list.source.local
 
+import kotlinx.coroutines.flow.Flow
+import mx.com.test.android.list.model.Pokemon
+
 interface LocalDataSource {
-    suspend fun addToFavorite(id: Int, isFavorite: Boolean): Boolean
-    suspend fun removeToFavorite(id: Int, isFavorite: Boolean): Boolean
+    fun getPokemonInfoById(id: Int): Flow<Pokemon?>
+
+    suspend fun updateFavorite(id: Int, isFavorite: Boolean): Long
 }

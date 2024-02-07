@@ -1,8 +1,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package mx.com.test.android.list.screen
+package mx.com.test.android.list.screen.list
 
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,29 +9,41 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -41,10 +52,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
@@ -55,20 +65,25 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import mx.com.test.android.list.PokemonItem
+import mx.com.test.android.list.screen.PokemonViewModel
 import mx.com.test.android.list.theme.PokemonTheme
+import mx.com.test.android.list.theme.pokemonTypography
 import mx.com.test.android.list.ui.R
 import timber.log.Timber
 
 @Composable
 fun PokemonScreen(
-    viewModel: PokemonListViewModel,
+    viewModel: PokemonViewModel,
     addToFavorite: (PokemonItem) -> Unit = {},
     removeToFavorite: (PokemonItem) -> Unit = {},
     navigateToPokemonInfo: (Int) -> Unit = {},
 ) {
+    val scrollState = rememberLazyListState()
+
     viewModel.uiState.collectAsLazyPagingItems().let { pokemonPagingItems ->
         PokemonScreenTest(
             pokemonPagingItems = pokemonPagingItems,
+            scrollState = scrollState,
             addToFavorite = addToFavorite,
             removeToFavorite = removeToFavorite,
             navigateToPokemonInfo = navigateToPokemonInfo
@@ -76,30 +91,31 @@ fun PokemonScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PokemonScreenTest(
     pokemonPagingItems: LazyPagingItems<PokemonItem>,
+    scrollState: LazyListState,
     addToFavorite: (PokemonItem) -> Unit,
     removeToFavorite: (PokemonItem) -> Unit,
     navigateToPokemonInfo: (Int) -> Unit = {},
 ) {
-    val decayAnimationSpec = rememberSplineBasedDecay<Float>()
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(flingAnimationSpec = decayAnimationSpec)
+
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = { TopAppBar(scrollBehavior) },
-
-        ) { innerPadding ->
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(integerResource(id = R.integer.cells)),
-            contentPadding = innerPadding,
+        contentWindowInsets = ScaffoldDefaults
+            .contentWindowInsets
+            .exclude(WindowInsets.navigationBars)
+            .exclude(WindowInsets.statusBars)
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier.padding(paddingValues),
+            state = scrollState,
+            contentPadding = WindowInsets.systemBars
+                .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+                .asPaddingValues(),
             content = {
                 items(pokemonPagingItems.itemCount) { index ->
-                    PokeCard(
+                    PokemonCard(
                         pokemon = pokemonPagingItems[index]!!,
                         addToFavorite = addToFavorite,
                         removeToFavorite = removeToFavorite,
@@ -142,7 +158,7 @@ private fun LoadingNextPageItem(modifier: Modifier) {
 
 
 @Composable
-private fun PokeCard(
+private fun PokemonCard(
     modifier: Modifier = Modifier,
     pokemon: PokemonItem,
     addToFavorite: (PokemonItem) -> Unit,
@@ -152,65 +168,60 @@ private fun PokeCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(ratio = 4f / 5f)
-            .padding(all = 8.dp)
-            .clickable {
-                navigateToPokemonInfo(pokemon.id)
-            },
-        shape = RoundedCornerShape(16.dp)
+            .padding(8.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = { navigateToPokemonInfo(pokemon.id) }),
+        colors = CardDefaults.cardColors(containerColor = PokemonTheme.colorScheme.onSurface),
+        elevation = CardDefaults.cardElevation(),
     ) {
-
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
+                .padding(16.dp)
         ) {
-            IconButton(
-                onClick = {
-                    if (pokemon.isFavorite) {
-                        removeToFavorite(pokemon.copy(isFavorite = false))
-                    } else {
-                        addToFavorite(pokemon.copy(isFavorite = true))
-                    }
-                },
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
+            SubcomposeAsyncImage(
+                modifier = Modifier
+                    .size(96.dp, 96.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+                alignment = Alignment.Center,
+                model = pokemon.imageUrl,
+                contentDescription = "",
+                loading = {}
+            )
 
-                Icon(
-                    imageVector = if (pokemon.isFavorite) {
-                        Icons.Rounded.Favorite
-                    } else {
-                        Icons.Rounded.FavoriteBorder
-                    },
-                    contentDescription = "Favorite",
-                    tint = MaterialTheme.colorScheme.outline
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = pokemon.name,
+                    modifier = Modifier.padding(0.dp, 0.dp, 12.dp, 0.dp),
+                    style = pokemonTypography.titleMedium,
                 )
             }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
-                SubcomposeAsyncImage(
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 20.dp,
-                            vertical = 16.dp
-                        )
-                        .fillMaxWidth()
-                        .height(128.dp),
-                    alignment = Alignment.Center,
-                    model = getPokemonImage(pokemon.id.toString()),
-                    contentDescription = "",
-                    loading = {}
-                )
-                Text(text = pokemon.name)
+                IconButton(
+                    onClick = {
+                        addToFavorite(pokemon.copy(isFavorite = pokemon.isFavorite.not()))
+                    },
+                ) {
+
+                    Icon(
+                        imageVector = if (pokemon.isFavorite) {
+                            Icons.Rounded.Favorite
+                        } else {
+                            Icons.Rounded.FavoriteBorder
+                        },
+                        contentDescription = "Favorite",
+                        tint = PokemonTheme.colorScheme.outline
+                    )
+                }
             }
         }
-
     }
 }
 
@@ -241,7 +252,7 @@ private fun TopAppBar(scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefault
             scrollBehavior = scrollBehavior
         )
         Image(
-            painter = painterResource(id = R.drawable.pokeball_1),
+            painter = painterResource(id = R.drawable.pokeball),
             contentDescription = "",
             modifier = Modifier
                 .wrapContentSize()

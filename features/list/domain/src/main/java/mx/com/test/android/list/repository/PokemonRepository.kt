@@ -2,15 +2,12 @@ package mx.com.test.android.list.repository
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import mx.com.test.android.domain.common.Result
 import mx.com.test.android.list.model.Pokemon
 
 interface PokemonRepository {
-    fun getPokemonList(offset: Int, limit: Int): Flow<PagingData<Pokemon>>
+    fun getPokemonList(): Flow<PagingData<Pokemon>>
 
-    suspend fun addToFavorite(pokemon: Pokemon): Result<Boolean>
+    fun getPokemonInfoById(id: Int): Flow<Pokemon?>
 
-    suspend fun removeToFavorite(pokemon: Pokemon): Result<Boolean>
-
-    suspend fun getPokemonInfoById(id: Int): Result<Pokemon>
+    fun updateFavorite(id: Int, isFavorite: Boolean): Flow<Boolean>
 }

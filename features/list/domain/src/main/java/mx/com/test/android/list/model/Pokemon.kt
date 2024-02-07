@@ -6,5 +6,6 @@ data class Pokemon(
     val imageUrl: String,
     val height: Int,
     val weight: Int,
+    val types: List<String>,
     val isFavorite: Boolean = false
 )

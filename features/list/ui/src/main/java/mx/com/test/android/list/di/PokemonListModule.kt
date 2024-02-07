@@ -6,12 +6,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
-import mx.com.test.android.list.interactor.AddToFavoriteUseCase
+import mx.com.test.android.list.interactor.GetPokemonInfoByIdUseCase
 import mx.com.test.android.list.interactor.GetPokemonListUseCase
-import mx.com.test.android.list.interactor.RemoveToFavoriteUseCase
+import mx.com.test.android.list.interactor.UpdateFavoriteUseCase
 import mx.com.test.android.list.mapper.PokemonItemToPokemonMapper
 import mx.com.test.android.list.mapper.PokemonToPokemonItemMapper
-import mx.com.test.android.list.screen.PokemonListViewModel
+import mx.com.test.android.list.screen.PokemonViewModel
+import mx.com.test.android.list.screen.info.PokemonInfoViewModel
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -21,19 +22,35 @@ object PokemonListModule {
     @ViewModelScoped
     fun providePokemonListViewModel(
         getPokemonListUseCase: GetPokemonListUseCase,
-        addToFavoriteUseCase: AddToFavoriteUseCase,
-        removeToFavoriteUseCase: RemoveToFavoriteUseCase,
         pokemonToPokemonItemMapper: PokemonToPokemonItemMapper,
         pokemonItemToPokemonMapper: PokemonItemToPokemonMapper,
-        savedStateHandle: SavedStateHandle
-    ): PokemonListViewModel {
-        return PokemonListViewModel(
+        getPokemonInfoByIdUseCase: GetPokemonInfoByIdUseCase,
+        updateFavoriteUseCase: UpdateFavoriteUseCase
+    ): PokemonViewModel {
+        return PokemonViewModel(
             getPokemonListUseCase = getPokemonListUseCase,
-            addToFavoriteUseCase = addToFavoriteUseCase,
-            removeToFavoriteUseCase = removeToFavoriteUseCase,
             pokemonToPokemonItemMapper = pokemonToPokemonItemMapper,
             pokemonItemToPokemonMapper = pokemonItemToPokemonMapper,
-            savedState = savedStateHandle,
+            getPokemonInfoByIdUseCase = getPokemonInfoByIdUseCase,
+            updateFavoriteUseCase = updateFavoriteUseCase
+        )
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun providePokemonInfoViewModel(
+        getPokemonInfoByIdUseCase: GetPokemonInfoByIdUseCase,
+        updateFavoriteUseCase: UpdateFavoriteUseCase,
+        pokemonToPokemonItemMapper: PokemonToPokemonItemMapper,
+        pokemonItemToPokemonMapper: PokemonItemToPokemonMapper,
+        savedStateHandle: SavedStateHandle,
+    ): PokemonInfoViewModel {
+        return PokemonInfoViewModel(
+            getPokemonInfoByIdUseCase = getPokemonInfoByIdUseCase,
+            updateFavoriteUseCase = updateFavoriteUseCase,
+            pokemonToPokemonItemMapper = pokemonToPokemonItemMapper,
+            pokemonItemToPokemonMapper = pokemonItemToPokemonMapper,
+            savedStateHandle = savedStateHandle
         )
     }
 }

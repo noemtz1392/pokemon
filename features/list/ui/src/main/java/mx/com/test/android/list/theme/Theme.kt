@@ -108,6 +108,7 @@ fun PokemonTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = ColorStatusBar.toArgb()
+            //window.navigationBarColor = ColorStatusBar.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }

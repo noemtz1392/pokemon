@@ -7,12 +7,12 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "Pokemon",
-    indices = [Index("id", unique = true)]
+    indices = [(Index("pokemon_id", unique = true))]
 )
 data class PokemonEntity(
 
     @PrimaryKey
-    @ColumnInfo(name = "id")
+    @ColumnInfo(name = "pokemon_id")
     val id: Int,
 
     @ColumnInfo(name = "name")
@@ -21,6 +21,12 @@ data class PokemonEntity(
     @ColumnInfo(name = "image_url")
     val imageUrl: String,
 
+    @ColumnInfo(name = "shiny_image_url")
+    val shinyImageUrl: String,
+
+    @ColumnInfo(name = "front_default")
+    val defaultImageUrl: String,
+
     @ColumnInfo(name = "height")
     val height: Int = 0,
 
@@ -28,5 +34,5 @@ data class PokemonEntity(
     val weight: Int = 0,
 
     @ColumnInfo(name = "favorite")
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
 )

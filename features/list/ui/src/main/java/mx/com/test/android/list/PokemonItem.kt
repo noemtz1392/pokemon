@@ -10,5 +10,6 @@ data class PokemonItem(
     val imageUrl: String,
     val height: Int,
     val weight: Int,
+    val types: List<String> = emptyList(),
     val isFavorite: Boolean = false
 ) : Parcelable

@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import mx.com.test.android.data.dao.TransactionRunner
 import mx.com.test.android.list.db.PokemonDatabase
 import mx.com.test.android.list.db.dao.PokemonDao
+import mx.com.test.android.list.db.dao.PokemonTypeDao
 import mx.com.test.android.list.db.dao.RemoteKeysDao
 import javax.inject.Singleton
 
@@ -24,6 +25,9 @@ object DatabaseModule {
 
     @Provides
     fun providePokemonDao(db: PokemonDatabase): PokemonDao = db.pokemonDao()
+
+    @Provides
+    fun providePokemonTypeDao(db: PokemonDatabase): PokemonTypeDao = db.pokemonTypeDao()
 
     @Provides
     fun provideRemoteKeysDao(db: PokemonDatabase): RemoteKeysDao = db.remoteKeysDao()

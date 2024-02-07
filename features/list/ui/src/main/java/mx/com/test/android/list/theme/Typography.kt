@@ -9,8 +9,8 @@ import androidx.compose.ui.unit.sp
 import mx.com.test.android.list.ui.R
 
 val circularStdFontFamily = FontFamily(
+    Font(R.font.circular_std_book, FontWeight.Normal),
     Font(R.font.circular_std_medium, FontWeight.Medium),
-    Font(R.font.circular_std_book, FontWeight.SemiBold),
     Font(R.font.circular_std_bold, FontWeight.Bold),
     Font(R.font.circular_std_black, FontWeight.Black)
 )
@@ -32,9 +32,9 @@ val pokemonTypography = Typography(
     ),
     displaySmall = TextStyle(
         fontFamily = circularStdFontFamily,
-        fontWeight = FontWeight.Normal,
-        fontSize = 36.sp,
-        lineHeight = 44.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 30.sp,
+        lineHeight = 36.sp,
         letterSpacing = 0.sp
     ),
     headlineLarge = TextStyle(
@@ -53,9 +53,9 @@ val pokemonTypography = Typography(
     ),
     headlineSmall = TextStyle(
         fontFamily = circularStdFontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
-        lineHeight = 32.sp,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
     titleLarge = TextStyle(

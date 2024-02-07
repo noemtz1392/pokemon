@@ -2,15 +2,15 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5e7b1aa688692b279aa3cebfe2d9c7a8",
+    "identityHash": "b9da1620e737714901452ce52c7a8997",
     "entities": [
       {
         "tableName": "Pokemon",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `image_url` TEXT NOT NULL, `height` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `favorite` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pokemon_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `image_url` TEXT NOT NULL, `shiny_image_url` TEXT NOT NULL, `front_default` TEXT NOT NULL, `height` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `favorite` INTEGER NOT NULL, PRIMARY KEY(`pokemon_id`))",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "id",
+            "columnName": "pokemon_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -23,6 +23,18 @@
           {
             "fieldPath": "imageUrl",
             "columnName": "image_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shinyImageUrl",
+            "columnName": "shiny_image_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "defaultImageUrl",
+            "columnName": "front_default",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -48,29 +60,29 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "id"
+            "pokemon_id"
           ]
         },
         "indices": [
           {
-            "name": "index_Pokemon_id",
+            "name": "index_Pokemon_pokemon_id",
             "unique": true,
             "columnNames": [
-              "id"
+              "pokemon_id"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Pokemon_id` ON `${TABLE_NAME}` (`id`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Pokemon_pokemon_id` ON `${TABLE_NAME}` (`pokemon_id`)"
           }
         ],
         "foreignKeys": []
       },
       {
         "tableName": "PokemonType",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pokemon_type_id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`pokemon_type_id`))",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "id",
+            "columnName": "pokemon_type_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -84,20 +96,59 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "id"
+            "pokemon_type_id"
           ]
         },
         "indices": [
           {
-            "name": "index_PokemonType_id",
+            "name": "index_PokemonType_pokemon_type_id",
             "unique": true,
             "columnNames": [
-              "id"
+              "pokemon_type_id"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_PokemonType_id` ON `${TABLE_NAME}` (`id`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_PokemonType_pokemon_type_id` ON `${TABLE_NAME}` (`pokemon_type_id`)"
           }
         ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "PokemonTypesCrossRef",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pokemon_id` INTEGER NOT NULL, `pokemon_name` TEXT NOT NULL, `pokemon_type_id` INTEGER NOT NULL, `pokemon_type` TEXT NOT NULL, PRIMARY KEY(`pokemon_id`, `pokemon_type_id`))",
+        "fields": [
+          {
+            "fieldPath": "pokemonId",
+            "columnName": "pokemon_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pokemonName",
+            "columnName": "pokemon_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pokemonTypeId",
+            "columnName": "pokemon_type_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pokemonType",
+            "columnName": "pokemon_type",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "pokemon_id",
+            "pokemon_type_id"
+          ]
+        },
+        "indices": [],
         "foreignKeys": []
       },
       {
@@ -158,7 +209,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5e7b1aa688692b279aa3cebfe2d9c7a8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b9da1620e737714901452ce52c7a8997')"
     ]
   }
 }

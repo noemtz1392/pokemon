@@ -1,4 +1,4 @@
-package mx.com.test.android.list.screen
+package mx.com.test.android.list.screen.list
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

@@ -76,6 +76,8 @@ dependencies {
     implementation("androidx.paging:paging-runtime-ktx:3.2.1")
     implementation("androidx.paging:paging-compose:3.2.1")
 
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+
 
     //Compose
     implementation(platform("androidx.compose:compose-bom:2023.09.02"))

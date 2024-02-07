@@ -19,6 +19,7 @@ val ColorPastel3 = Color(0xFFBBD9D7)
 val ColorPastel4 = Color(0xFFEFD3BB)
 val ColorPastel5 = Color(0xFFEBBCB4)
 val ColorPastel6 = Color(0xFFF1CEB0)
+
 val ColorLazyGridItem = listOf(
     ColorPastel1,
     ColorPastel2,

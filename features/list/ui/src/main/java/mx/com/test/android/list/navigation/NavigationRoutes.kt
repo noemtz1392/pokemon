@@ -12,8 +12,13 @@ sealed class NavigationRoutes {
         data object NavigationRoute : Authenticated(route = "authenticated")
 
         data object PokemonList : Authenticated(route = "pokemon_list")
-        data object PokemonInfo : Authenticated(route = "pokemon_info/{id}") {
+        data object PokemonInfo : Authenticated(route = "pokemon_info/{${Routes.PARAM_POKEMON_ID}}") {
             fun createRoute(id: Int) = "pokemon_info/$id"
         }
     }
+}
+
+
+object Routes {
+    const val PARAM_POKEMON_ID = "id"
 }

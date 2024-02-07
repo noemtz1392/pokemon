@@ -9,11 +9,17 @@ import mx.com.test.android.list.db.dao.PokemonTypeDao
 import mx.com.test.android.list.db.dao.RemoteKeysDao
 import mx.com.test.android.list.db.dao.TransactionRunnerDao
 import mx.com.test.android.list.db.entities.PokemonEntity
-import mx.com.test.android.list.db.entities.PokemonType
+import mx.com.test.android.list.db.entities.PokemonTypeEntity
 import mx.com.test.android.list.db.entities.RemoteKeysEntity
+import mx.com.test.android.list.db.entities.relations.PokemonTypesCrossRef
 
 @Database(
-    entities = [PokemonEntity::class, PokemonType::class, RemoteKeysEntity::class],
+    entities = [
+        PokemonEntity::class,
+        PokemonTypeEntity::class,
+        PokemonTypesCrossRef::class,
+        RemoteKeysEntity::class
+    ],
     version = PokemonDatabase.DB_VERSION,
     exportSchema = true,
 )

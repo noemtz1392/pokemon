@@ -4,15 +4,14 @@ import mx.com.test.android.domain.common.Mapper
 import mx.com.test.android.list.db.entities.PokemonEntity
 import mx.com.test.android.list.model.Pokemon
 
-class PokemonEntityToPokemonMapper() : Mapper<PokemonEntity, Pokemon>() {
-    override fun mapFrom(from: PokemonEntity): Pokemon {
-        return Pokemon(
+class PokemonToPokemonEntityMapper : Mapper<Pokemon, PokemonEntity>() {
+    override fun mapFrom(from: Pokemon): PokemonEntity {
+        return PokemonEntity(
             id = from.id,
             name = from.name,
             imageUrl = from.imageUrl,
-            height = from.height,
-            weight = from.weight,
-            types = emptyList(),
+            shinyImageUrl = "",
+            defaultImageUrl = "",
             isFavorite = from.isFavorite
         )
     }

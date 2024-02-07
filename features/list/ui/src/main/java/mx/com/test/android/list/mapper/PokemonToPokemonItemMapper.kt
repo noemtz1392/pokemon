@@ -12,6 +12,7 @@ class PokemonToPokemonItemMapper : Mapper<Pokemon, PokemonItem>() {
             imageUrl = from.imageUrl,
             height = from.height,
             weight = from.weight,
+            types = from.types,
             isFavorite = from.isFavorite
         )
     }

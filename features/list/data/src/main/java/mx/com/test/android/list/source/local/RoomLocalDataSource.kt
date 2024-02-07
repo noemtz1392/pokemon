@@ -1,17 +1,22 @@
 package mx.com.test.android.list.source.local
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import mx.com.test.android.list.db.dao.PokemonDao
-import javax.inject.Inject
+import mx.com.test.android.list.mapper.PokemonWithTypesToPokemonMapper
+import mx.com.test.android.list.model.Pokemon
 
-class RoomLocalDataSource @Inject constructor(
-    private val pokemonDao: PokemonDao
+class RoomLocalDataSource(
+    private val pokemonDao: PokemonDao,
+    private val pokemonWithTypesToPokemonMapper: PokemonWithTypesToPokemonMapper,
 ) : LocalDataSource {
 
-    override suspend fun addToFavorite(id: Int, isFavorite: Boolean): Boolean {
-        return pokemonDao.addToFavorite(id = id, isFavorite = isFavorite) > 0
+    override fun getPokemonInfoById(id: Int): Flow<Pokemon?> {
+        return pokemonDao.getPokemonInfo(id).map { pokemonWithTypesToPokemonMapper.mapFrom(it) }
     }
 
-    override suspend fun removeToFavorite(id: Int, isFavorite: Boolean): Boolean {
-        return pokemonDao.removeToFavorite(id = id, isFavorite = isFavorite) > 0
-    }
+
+    override suspend fun updateFavorite(id: Int, isFavorite: Boolean): Long =
+        pokemonDao.updateFavorite(id = id, isFavorite = isFavorite).toLong()
+
 }
